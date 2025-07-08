@@ -1,55 +1,229 @@
-// Enhanced Game database with mobile fixes
+// Enhanced Game database with mobile fixes and Netflix-style swipe functionality
 
-// Unified pointer events
-const gameCards = document.querySelectorAll(".game-card");
-gameCards.forEach((card) => {
-  card.addEventListener("pointerdown", () => {
-    card.style.transform = "scale(0.95)";
+// Unified pointer events for cards
+function initializeCardInteractions() {
+  const gameCards = document.querySelectorAll(".game-card");
+  gameCards.forEach((card) => {
+    // Use pointer events for better cross-device compatibility
+    card.addEventListener("pointerdown", handleCardPress);
+    card.addEventListener("pointerup", handleCardRelease);
+    card.addEventListener("pointercancel", handleCardRelease);
+    card.addEventListener("pointerleave", handleCardRelease);
   });
-  card.addEventListener("pointerup", () => {
-    card.style.transform = "scale(1)";
-  });
-});
+}
 
-// Touch-friendly scrolling logic
-let isScrolling = false;
-document.addEventListener(
-  "touchmove",
-  function (e) {
-    if (!isScrolling) {
-      e.preventDefault();
+function handleCardPress(e) {
+  e.currentTarget.style.transform = "scale(0.95)";
+  e.currentTarget.style.transition = "transform 0.1s ease";
+}
+
+function handleCardRelease(e) {
+  e.currentTarget.style.transform = "scale(1)";
+  e.currentTarget.style.transition = "transform 0.2s ease";
+}
+
+// Netflix-style swipe functionality
+class SwipeHandler {
+  constructor(container) {
+    this.container = container;
+    this.startX = 0;
+    this.startY = 0;
+    this.currentX = 0;
+    this.currentY = 0;
+    this.isDragging = false;
+    this.isScrolling = false;
+    this.threshold = 50; // minimum swipe distance
+    this.restraint = 100; // maximum distance in perpendicular direction
+    this.allowedTime = 300; // maximum time for swipe
+    this.startTime = 0;
+
+    this.initializeSwipe();
+  }
+
+  initializeSwipe() {
+    // Touch events
+    this.container.addEventListener(
+      "touchstart",
+      this.handleTouchStart.bind(this),
+      { passive: false }
+    );
+    this.container.addEventListener(
+      "touchmove",
+      this.handleTouchMove.bind(this),
+      { passive: false }
+    );
+    this.container.addEventListener(
+      "touchend",
+      this.handleTouchEnd.bind(this),
+      { passive: false }
+    );
+
+    // Mouse events for desktop
+    this.container.addEventListener(
+      "mousedown",
+      this.handleMouseDown.bind(this)
+    );
+    this.container.addEventListener(
+      "mousemove",
+      this.handleMouseMove.bind(this)
+    );
+    this.container.addEventListener("mouseup", this.handleMouseUp.bind(this));
+    this.container.addEventListener(
+      "mouseleave",
+      this.handleMouseUp.bind(this)
+    );
+  }
+
+  handleTouchStart(e) {
+    this.startTouch(e.touches[0].clientX, e.touches[0].clientY);
+  }
+
+  handleTouchMove(e) {
+    if (!this.isDragging) return;
+
+    this.currentX = e.touches[0].clientX;
+    this.currentY = e.touches[0].clientY;
+
+    // Determine if this is a horizontal swipe
+    const deltaX = Math.abs(this.currentX - this.startX);
+    const deltaY = Math.abs(this.currentY - this.startY);
+
+    if (deltaX > deltaY && deltaX > 10) {
+      e.preventDefault(); // Prevent vertical scrolling
+      this.isScrolling = true;
+      this.updateSwipePosition();
     }
-  },
-  { passive: false }
-);
+  }
 
-document.querySelectorAll(".games-row, .categories").forEach((row) => {
-  row.addEventListener("touchstart", function () {
-    isScrolling = true;
-  });
-  row.addEventListener("touchend", function () {
-    isScrolling = false;
-  });
-});
+  handleTouchEnd(e) {
+    this.endTouch();
+  }
+
+  handleMouseDown(e) {
+    this.startTouch(e.clientX, e.clientY);
+  }
+
+  handleMouseMove(e) {
+    if (!this.isDragging) return;
+
+    this.currentX = e.clientX;
+    this.currentY = e.clientY;
+
+    const deltaX = Math.abs(this.currentX - this.startX);
+    const deltaY = Math.abs(this.currentY - this.startY);
+
+    if (deltaX > deltaY && deltaX > 10) {
+      e.preventDefault();
+      this.isScrolling = true;
+      this.updateSwipePosition();
+    }
+  }
+
+  handleMouseUp(e) {
+    this.endTouch();
+  }
+
+  startTouch(x, y) {
+    this.startX = x;
+    this.startY = y;
+    this.currentX = x;
+    this.currentY = y;
+    this.isDragging = true;
+    this.isScrolling = false;
+    this.startTime = Date.now();
+    this.container.style.transition = "none";
+  }
+
+  updateSwipePosition() {
+    const deltaX = this.currentX - this.startX;
+    const currentTransform = this.container.style.transform;
+    const currentTranslate = this.getTranslateX(currentTransform);
+
+    this.container.style.transform = `translateX(${
+      currentTranslate + deltaX
+    }px)`;
+  }
+
+  endTouch() {
+    if (!this.isDragging) return;
+
+    const deltaX = this.currentX - this.startX;
+    const deltaY = this.currentY - this.startY;
+    const elapsedTime = Date.now() - this.startTime;
+
+    this.isDragging = false;
+    this.container.style.transition = "transform 0.3s ease";
+
+    // Check if it's a valid swipe
+    if (
+      elapsedTime <= this.allowedTime &&
+      Math.abs(deltaX) >= this.threshold &&
+      Math.abs(deltaY) <= this.restraint
+    ) {
+      if (deltaX > 0) {
+        this.swipeRight();
+      } else {
+        this.swipeLeft();
+      }
+    } else {
+      // Reset position
+      this.resetPosition();
+    }
+
+    setTimeout(() => {
+      this.isScrolling = false;
+    }, 100);
+  }
+
+  swipeLeft() {
+    const containerWidth = this.container.offsetWidth;
+    const scrollWidth = this.container.scrollWidth;
+    const currentTranslate = this.getTranslateX(this.container.style.transform);
+    const cardWidth =
+      this.container.querySelector(".game-card")?.offsetWidth || 200;
+
+    const newTranslate = Math.max(
+      currentTranslate - cardWidth * 2,
+      -(scrollWidth - containerWidth)
+    );
+    this.container.style.transform = `translateX(${newTranslate}px)`;
+  }
+
+  swipeRight() {
+    const currentTranslate = this.getTranslateX(this.container.style.transform);
+    const cardWidth =
+      this.container.querySelector(".game-card")?.offsetWidth || 200;
+
+    const newTranslate = Math.min(currentTranslate + cardWidth * 2, 0);
+    this.container.style.transform = `translateX(${newTranslate}px)`;
+  }
+
+  resetPosition() {
+    const currentTranslate = this.getTranslateX(this.container.style.transform);
+    this.container.style.transform = `translateX(${currentTranslate}px)`;
+  }
+
+  getTranslateX(transform) {
+    if (!transform || transform === "none") return 0;
+    const matrix = transform.match(/matrix.*\((.+)\)/);
+    if (matrix) {
+      return parseFloat(matrix[1].split(", ")[4]) || 0;
+    }
+    const translateX = transform.match(/translateX\((.+?)px\)/);
+    return translateX ? parseFloat(translateX[1]) : 0;
+  }
+}
 
 // Throttle function to prevent overload
 function throttle(func, limit) {
-  let lastFunc;
-  let lastRan;
+  let inThrottle;
   return function () {
-    const context = this;
     const args = arguments;
-    if (!lastRan) {
+    const context = this;
+    if (!inThrottle) {
       func.apply(context, args);
-      lastRan = Date.now();
-    } else {
-      clearTimeout(lastFunc);
-      lastFunc = setTimeout(function () {
-        if (Date.now() - lastRan >= limit) {
-          func.apply(context, args);
-          lastRan = Date.now();
-        }
-      }, limit - (Date.now() - lastRan));
+      inThrottle = true;
+      setTimeout(() => (inThrottle = false), limit);
     }
   };
 }
@@ -117,18 +291,23 @@ const games = {
   ],
 };
 
-// Create game card
+// Create game card with improved accessibility
 function createGameCard(game, isFeatured = false) {
   const card = document.createElement("a");
   card.href = game.url;
   card.className = isFeatured ? "game-card featured-game" : "game-card";
+  card.setAttribute("aria-label", `Play ${game.name} - ${game.description}`);
   card.innerHTML = `
-      <img src="${game.image}" alt="${game.name}" class="game-image">
+      <img src="${game.image}" alt="${
+    game.name
+  }" class="game-image" loading="lazy">
       <div class="game-info">
           <h3 class="game-title">${game.name}</h3>
           <p class="game-description">${game.description}</p>
           <div class="game-meta">
-              <span class="game-rating">${game.rating}</span>
+              <span class="game-rating" aria-label="Rating: ${game.rating}">${
+    game.rating
+  }</span>
               <span class="game-category">${
                 game.category.charAt(0).toUpperCase() + game.category.slice(1)
               }</span>
@@ -138,64 +317,164 @@ function createGameCard(game, isFeatured = false) {
   return card;
 }
 
-// Populate game sections
+// Populate game sections with error handling
 function populateGames() {
-  const featuredGrid = document.getElementById("featuredGames");
-  const popularGrid = document.getElementById("popularGames");
-  const classicGrid = document.getElementById("classicGames");
-  const newGrid = document.getElementById("newGames");
+  try {
+    const sections = {
+      featuredGames: games.featured,
+      popularGames: games.popular,
+      classicGames: games.classic,
+      newGames: games.new || [],
+    };
 
-  games.featured.forEach((game) => {
-    featuredGrid.appendChild(createGameCard(game, game.featured));
-  });
-  games.popular.forEach((game) => {
-    popularGrid.appendChild(createGameCard(game));
-  });
-  games.classic.forEach((game) => {
-    classicGrid.appendChild(createGameCard(game));
-  });
-  if (games.new) {
-    games.new.forEach((game) => {
-      newGrid.appendChild(createGameCard(game));
+    Object.entries(sections).forEach(([sectionId, gameList]) => {
+      const container = document.getElementById(sectionId);
+      if (container && gameList) {
+        gameList.forEach((game) => {
+          container.appendChild(createGameCard(game, game.featured));
+        });
+      }
     });
+
+    // Initialize swipe handlers for each game row
+    initializeSwipeHandlers();
+  } catch (error) {
+    console.error("Error populating games:", error);
   }
 }
 
-// Filter games
-function filterGames(category) {
-  const buttons = document.querySelectorAll(".category-btn");
-  buttons.forEach((btn) => btn.classList.remove("active"));
-  event.target.classList.add("active");
-  const allCards = document.querySelectorAll(".game-card");
-  allCards.forEach((card) => {
-    const gameCategory = card
-      .querySelector(".game-category")
-      .textContent.toLowerCase();
-    card.style.display =
-      category === "all" || gameCategory === category ? "block" : "none";
+// Initialize swipe handlers for game rows
+function initializeSwipeHandlers() {
+  const gameRows = document.querySelectorAll(".games-row");
+  gameRows.forEach((row) => {
+    new SwipeHandler(row);
   });
 }
 
-// Search functionality
-const searchInput = document.getElementById("searchInput");
-searchInput.addEventListener("input", function (e) {
-  const searchTerm = e.target.value.toLowerCase();
-  const allCards = document.querySelectorAll(".game-card");
-  allCards.forEach((card) => {
-    const title = card.querySelector(".game-title").textContent.toLowerCase();
-    const description = card
-      .querySelector(".game-description")
-      .textContent.toLowerCase();
-    card.style.display =
-      title.includes(searchTerm) || description.includes(searchTerm)
-        ? "block"
-        : searchTerm
-        ? "none"
-        : "block";
+// Filter games with improved performance
+function filterGames(category) {
+  try {
+    const buttons = document.querySelectorAll(".category-btn");
+    buttons.forEach((btn) => btn.classList.remove("active"));
+
+    // Use event delegation or find the clicked button
+    const clickedButton =
+      document.querySelector(`[data-category="${category}"]`) ||
+      Array.from(buttons).find(
+        (btn) => btn.textContent.toLowerCase() === category
+      );
+    if (clickedButton) {
+      clickedButton.classList.add("active");
+    }
+
+    const allCards = document.querySelectorAll(".game-card");
+    allCards.forEach((card) => {
+      const categoryElement = card.querySelector(".game-category");
+      if (categoryElement) {
+        const gameCategory = categoryElement.textContent.toLowerCase();
+        card.style.display =
+          category === "all" || gameCategory === category ? "block" : "none";
+      }
+    });
+  } catch (error) {
+    console.error("Error filtering games:", error);
+  }
+}
+
+// Enhanced search functionality with debouncing
+function initializeSearch() {
+  const searchInput = document.getElementById("searchInput");
+  if (!searchInput) return;
+
+  const debouncedSearch = throttle(function (searchTerm) {
+    const allCards = document.querySelectorAll(".game-card");
+    allCards.forEach((card) => {
+      const titleElement = card.querySelector(".game-title");
+      const descriptionElement = card.querySelector(".game-description");
+
+      if (titleElement && descriptionElement) {
+        const title = titleElement.textContent.toLowerCase();
+        const description = descriptionElement.textContent.toLowerCase();
+
+        const matches =
+          title.includes(searchTerm) || description.includes(searchTerm);
+        card.style.display = matches || searchTerm === "" ? "block" : "none";
+      }
+    });
+  }, 300);
+
+  searchInput.addEventListener("input", function (e) {
+    const searchTerm = e.target.value.toLowerCase();
+    debouncedSearch(searchTerm);
   });
+}
+
+// Prevent default touch behaviors on specific elements
+function preventDefaultTouchBehavior() {
+  document.addEventListener(
+    "touchstart",
+    function (e) {
+      // Allow touch events on interactive elements
+      if (e.target.matches("input, button, a, select, textarea")) {
+        return;
+      }
+    },
+    { passive: true }
+  );
+
+  document.addEventListener(
+    "touchmove",
+    function (e) {
+      // Only prevent default if not scrolling vertically
+      const touch = e.touches[0];
+      if (touch) {
+        const element = document.elementFromPoint(touch.clientX, touch.clientY);
+        if (element && element.closest(".games-row")) {
+          // Let the swipe handler manage this
+          return;
+        }
+      }
+    },
+    { passive: true }
+  );
+}
+
+// Initialize everything when DOM is ready
+document.addEventListener("DOMContentLoaded", function () {
+  try {
+    populateGames();
+    initializeCardInteractions();
+    initializeSearch();
+    preventDefaultTouchBehavior();
+
+    // Add category filter event listeners
+    const categoryButtons = document.querySelectorAll(".category-btn");
+    categoryButtons.forEach((button) => {
+      button.addEventListener("click", function (e) {
+        e.preventDefault();
+        const category =
+          this.dataset.category || this.textContent.toLowerCase();
+        filterGames(category);
+      });
+    });
+  } catch (error) {
+    console.error("Error initializing application:", error);
+  }
 });
 
-// Initialize on DOM load
-document.addEventListener("DOMContentLoaded", function () {
-  populateGames();
-});
+// Handle window resize for responsive behavior
+window.addEventListener(
+  "resize",
+  throttle(function () {
+    // Reset transforms on resize to prevent layout issues
+    const gameRows = document.querySelectorAll(".games-row");
+    gameRows.forEach((row) => {
+      row.style.transform = "translateX(0px)";
+    });
+  }, 250)
+);
+
+// Export for potential module usage
+if (typeof module !== "undefined" && module.exports) {
+  module.exports = { games, createGameCard, filterGames, SwipeHandler };
+}
