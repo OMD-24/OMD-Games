@@ -1,3 +1,59 @@
+// Enhanced Game database with mobile fixes
+
+// Unified pointer events
+const gameCards = document.querySelectorAll(".game-card");
+gameCards.forEach((card) => {
+  card.addEventListener("pointerdown", () => {
+    card.style.transform = "scale(0.95)";
+  });
+  card.addEventListener("pointerup", () => {
+    card.style.transform = "scale(1)";
+  });
+});
+
+// Touch-friendly scrolling logic
+let isScrolling = false;
+document.addEventListener(
+  "touchmove",
+  function (e) {
+    if (!isScrolling) {
+      e.preventDefault();
+    }
+  },
+  { passive: false }
+);
+
+document.querySelectorAll(".games-row, .categories").forEach((row) => {
+  row.addEventListener("touchstart", function () {
+    isScrolling = true;
+  });
+  row.addEventListener("touchend", function () {
+    isScrolling = false;
+  });
+});
+
+// Throttle function to prevent overload
+function throttle(func, limit) {
+  let lastFunc;
+  let lastRan;
+  return function () {
+    const context = this;
+    const args = arguments;
+    if (!lastRan) {
+      func.apply(context, args);
+      lastRan = Date.now();
+    } else {
+      clearTimeout(lastFunc);
+      lastFunc = setTimeout(function () {
+        if (Date.now() - lastRan >= limit) {
+          func.apply(context, args);
+          lastRan = Date.now();
+        }
+      }, limit - (Date.now() - lastRan));
+    }
+  };
+}
+
 // Game database
 const games = {
   featured: [
@@ -61,29 +117,28 @@ const games = {
   ],
 };
 
-// Function to create game card
+// Create game card
 function createGameCard(game, isFeatured = false) {
   const card = document.createElement("a");
   card.href = game.url;
   card.className = isFeatured ? "game-card featured-game" : "game-card";
   card.innerHTML = `
-          <img src="${game.image}" alt="${game.name}" class="game-image">
-          <div class="game-info">
-              <h3 class="game-title">${game.name}</h3>
-              <p class="game-description">${game.description}</p>
-              <div class="game-meta">
-                  <span class="game-rating">${game.rating}</span>
-                  <span class="game-category">${
-                    game.category.charAt(0).toUpperCase() +
-                    game.category.slice(1)
-                  }</span>
-              </div>
+      <img src="${game.image}" alt="${game.name}" class="game-image">
+      <div class="game-info">
+          <h3 class="game-title">${game.name}</h3>
+          <p class="game-description">${game.description}</p>
+          <div class="game-meta">
+              <span class="game-rating">${game.rating}</span>
+              <span class="game-category">${
+                game.category.charAt(0).toUpperCase() + game.category.slice(1)
+              }</span>
           </div>
-      `;
+      </div>
+  `;
   return card;
 }
 
-// Function to populate game sections
+// Populate game sections
 function populateGames() {
   const featuredGrid = document.getElementById("featuredGames");
   const popularGrid = document.getElementById("popularGames");
@@ -93,155 +148,54 @@ function populateGames() {
   games.featured.forEach((game) => {
     featuredGrid.appendChild(createGameCard(game, game.featured));
   });
-
   games.popular.forEach((game) => {
     popularGrid.appendChild(createGameCard(game));
   });
-
   games.classic.forEach((game) => {
     classicGrid.appendChild(createGameCard(game));
   });
-
-  games.new.forEach((game) => {
-    newGrid.appendChild(createGameCard(game));
-  });
+  if (games.new) {
+    games.new.forEach((game) => {
+      newGrid.appendChild(createGameCard(game));
+    });
+  }
 }
 
-// Function to filter games by category
+// Filter games
 function filterGames(category) {
   const buttons = document.querySelectorAll(".category-btn");
   buttons.forEach((btn) => btn.classList.remove("active"));
   event.target.classList.add("active");
-
   const allCards = document.querySelectorAll(".game-card");
   allCards.forEach((card) => {
-    if (category === "all") {
-      card.style.display = "block";
-    } else {
-      const gameCategory = card
-        .querySelector(".game-category")
-        .textContent.toLowerCase();
-      card.style.display = gameCategory === category ? "block" : "none";
-    }
+    const gameCategory = card
+      .querySelector(".game-category")
+      .textContent.toLowerCase();
+    card.style.display =
+      category === "all" || gameCategory === category ? "block" : "none";
   });
 }
 
-// Header scroll effect
-window.addEventListener("scroll", () => {
-  const header = document.getElementById("header");
-  if (window.scrollY > 50) {
-    header.classList.add("scrolled");
-  } else {
-    header.classList.remove("scrolled");
-  }
-});
-
 // Search functionality
-document.getElementById("searchInput").addEventListener("input", function (e) {
+const searchInput = document.getElementById("searchInput");
+searchInput.addEventListener("input", function (e) {
   const searchTerm = e.target.value.toLowerCase();
   const allCards = document.querySelectorAll(".game-card");
-
   allCards.forEach((card) => {
     const title = card.querySelector(".game-title").textContent.toLowerCase();
     const description = card
       .querySelector(".game-description")
       .textContent.toLowerCase();
-
-    if (title.includes(searchTerm) || description.includes(searchTerm)) {
-      card.style.display = "block";
-    } else {
-      card.style.display = searchTerm ? "none" : "block";
-    }
+    card.style.display =
+      title.includes(searchTerm) || description.includes(searchTerm)
+        ? "block"
+        : searchTerm
+        ? "none"
+        : "block";
   });
 });
 
-// Initialize the page
+// Initialize on DOM load
 document.addEventListener("DOMContentLoaded", function () {
   populateGames();
-});
-
-// Mobile menu toggle
-// const mobileMenuBtn = document.getElementById("mobileMenuBtn");
-// const mobileMenu = document.getElementById("mobileMenu");
-
-// mobileMenuBtn.addEventListener("click", () => {
-//   mobileMenu.classList.toggle("active");
-// });
-
-// // Close mobile menu when clicking on nav links
-// const mobileNavLinks = mobileMenu.querySelectorAll("a");
-// mobileNavLinks.forEach((link) => {
-//   link.addEventListener("click", () => {
-//     mobileMenu.classList.remove("active");
-//   });
-// });
-
-// Header scroll effect
-window.addEventListener("scroll", () => {
-  const header = document.getElementById("header");
-  if (window.scrollY > 50) {
-    header.classList.add("scrolled");
-  } else {
-    header.classList.remove("scrolled");
-  }
-});
-
-// Category filtering
-function filterGames(category) {
-  const categoryBtns = document.querySelectorAll(".category-btn");
-  categoryBtns.forEach((btn) => {
-    btn.classList.remove("active");
-  });
-
-  event.target.classList.add("active");
-
-  // Add your filtering logic here
-  console.log("Filtering games by:", category);
-}
-
-// Search functionality
-const searchInputs = document.querySelectorAll(
-  "#searchInput, .mobile-menu .search-box"
-);
-searchInputs.forEach((input) => {
-  input.addEventListener("input", (e) => {
-    const searchTerm = e.target.value.toLowerCase();
-    // Add your search logic here
-    console.log("Searching for:", searchTerm);
-  });
-});
-
-// Touch-friendly interactions for mobile
-const gameCards = document.querySelectorAll(".game-card");
-gameCards.forEach((card) => {
-  card.addEventListener("touchstart", function (e) {
-    this.style.transform = "scale(0.95)";
-  });
-
-  card.addEventListener("touchend", function (e) {
-    this.style.transform = "scale(1)";
-  });
-});
-
-// Prevent horizontal scroll on mobile
-let isScrolling = false;
-document.addEventListener(
-  "touchmove",
-  function (e) {
-    if (!isScrolling) {
-      e.preventDefault();
-    }
-  },
-  { passive: false }
-);
-
-// Allow scrolling for games rows
-document.querySelectorAll(".games-row, .categories").forEach((row) => {
-  row.addEventListener("touchstart", function () {
-    isScrolling = true;
-  });
-
-  row.addEventListener("touchend", function () {
-    isScrolling = false;
-  });
 });

@@ -4,6 +4,14 @@
   box-sizing: border-box;
 }
 
+/* Add this to your player, doll, or game container */
+.player,
+.bot,
+.doll,
+.game-container {
+  touch-action: none;
+}
+
 .doll-flip {
   transform: rotateY(180deg) scale(0.4) translateX(-50%);
 }
