@@ -23,11 +23,13 @@
       }
 
       .game-container {
+        width: 90%;
+        max-width: 500px;
         text-align: center;
         background: rgba(15, 23, 42, 0.9);
         backdrop-filter: blur(20px);
         border-radius: 25px;
-        padding: 45px;
+        padding: 35px;
         box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5),
           0 0 100px rgba(30, 58, 138, 0.3),
           inset 0 1px 0 rgba(255, 255, 255, 0.1);
@@ -66,30 +68,20 @@
       }
 
       h1 {
-        font-size: 3.5em;
+        font-size: 3em;
         font-weight: 700;
-        margin-bottom: 25px;
+        margin-bottom: 20px;
         background: linear-gradient(45deg, #60a5fa, #34d399, #a78bfa, #fbbf24);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
         text-shadow: 0 0 40px rgba(96, 165, 250, 0.5);
-        letter-spacing: 2px;
-        animation: titleGlow 3s ease-in-out infinite alternate;
-      }
-
-      @keyframes titleGlow {
-        0% {
-          filter: drop-shadow(0 0 20px rgba(96, 165, 250, 0.5));
-        }
-        100% {
-          filter: drop-shadow(0 0 40px rgba(52, 211, 153, 0.8));
-        }
+        letter-spacing: 1.5px;
       }
 
       .game-info {
-        margin-bottom: 30px;
-        font-size: 1.2em;
+        margin-bottom: 25px;
+        font-size: 1.1em;
         font-weight: 500;
       }
 
@@ -97,25 +89,16 @@
         color: #34d399;
         font-weight: bold;
         text-shadow: 0 0 15px rgba(52, 211, 153, 0.6);
-        animation: playerGlow 2s ease-in-out infinite alternate;
-      }
-
-      @keyframes playerGlow {
-        0% {
-          text-shadow: 0 0 15px rgba(52, 211, 153, 0.6);
-        }
-        100% {
-          text-shadow: 0 0 25px rgba(52, 211, 153, 0.9);
-        }
       }
 
       .board {
         display: grid;
-        grid-template-columns: repeat(3, 130px);
-        grid-template-rows: repeat(3, 130px);
+        grid-template-columns: repeat(3, 1fr);
         gap: 12px;
+        width: 100%;
+        max-width: 420px;
         margin: 0 auto 30px;
-        padding: 25px;
+        padding: 20px;
         background: rgba(15, 23, 42, 0.8);
         border-radius: 20px;
         box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.5),
@@ -124,6 +107,7 @@
       }
 
       .cell {
+        aspect-ratio: 1 / 1;
         background: linear-gradient(
           145deg,
           rgba(30, 58, 138, 0.3),
@@ -131,10 +115,10 @@
         );
         border: 2px solid rgba(59, 130, 246, 0.4);
         border-radius: 15px;
-        font-size: 3.2em;
+        font-size: clamp(2rem, 8vw, 3.2rem);
         font-weight: 900;
         cursor: pointer;
-        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        transition: all 0.4s ease;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -143,125 +127,50 @@
         backdrop-filter: blur(10px);
       }
 
-      .cell::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(
-          90deg,
-          transparent,
-          rgba(96, 165, 250, 0.3),
-          transparent
-        );
-        transition: left 0.5s ease;
-      }
-
-      .cell:hover::before {
-        left: 100%;
-      }
-
       .cell:hover {
-        background: linear-gradient(
-          145deg,
-          rgba(59, 130, 246, 0.4),
-          rgba(30, 58, 138, 0.6)
-        );
-        border-color: rgba(96, 165, 250, 0.8);
-        transform: scale(1.05) translateY(-2px);
-        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4),
-          0 0 30px rgba(59, 130, 246, 0.5);
+        background: rgba(59, 130, 246, 0.2);
+        transform: scale(1.05);
       }
 
       .cell.x {
         color: #f472b6;
-        text-shadow: 0 0 20px rgba(244, 114, 182, 0.8),
-          0 0 40px rgba(244, 114, 182, 0.4);
-        animation: popIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        text-shadow: 0 0 20px rgba(244, 114, 182, 0.8);
       }
 
       .cell.o {
         color: #34d399;
-        text-shadow: 0 0 20px rgba(52, 211, 153, 0.8),
-          0 0 40px rgba(52, 211, 153, 0.4);
-        animation: popIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-      }
-
-      @keyframes popIn {
-        0% {
-          transform: scale(0);
-          opacity: 0;
-        }
-        50% {
-          transform: scale(1.2);
-        }
-        100% {
-          transform: scale(1);
-          opacity: 1;
-        }
+        text-shadow: 0 0 20px rgba(52, 211, 153, 0.8);
       }
 
       .cell.winning {
         background: linear-gradient(45deg, #fbbf24, #f59e0b, #d97706);
         color: #1f2937;
-        animation: winPulse 1.2s ease-in-out infinite;
         border-color: #fbbf24;
-        box-shadow: 0 0 40px rgba(251, 191, 36, 0.8),
-          inset 0 0 20px rgba(249, 158, 11, 0.3);
+        animation: pulse 1.2s infinite ease-in-out;
       }
 
-      @keyframes winPulse {
-        0%,
-        100% {
+      @keyframes pulse {
+        0% {
           transform: scale(1);
-          box-shadow: 0 0 40px rgba(251, 191, 36, 0.8),
-            inset 0 0 20px rgba(249, 158, 11, 0.3);
         }
         50% {
           transform: scale(1.08);
-          box-shadow: 0 0 60px rgba(251, 191, 36, 1),
-            inset 0 0 30px rgba(249, 158, 11, 0.5);
+        }
+        100% {
+          transform: scale(1);
         }
       }
 
       .game-status {
-        font-size: 1.5em;
+        font-size: 1.4em;
         font-weight: bold;
-        margin-bottom: 20px;
-        min-height: 40px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+        margin-bottom: 15px;
+        min-height: 30px;
       }
 
       .winner {
         color: #fbbf24;
         text-shadow: 0 0 20px rgba(251, 191, 36, 0.8);
-        animation: celebrate 1.5s ease-in-out;
-      }
-
-      @keyframes celebrate {
-        0%,
-        100% {
-          transform: scale(1);
-        }
-        15% {
-          transform: scale(1.15) rotate(-3deg);
-        }
-        30% {
-          transform: scale(1.1) rotate(3deg);
-        }
-        45% {
-          transform: scale(1.15) rotate(-2deg);
-        }
-        60% {
-          transform: scale(1.1) rotate(2deg);
-        }
-        75% {
-          transform: scale(1.05) rotate(-1deg);
-        }
       }
 
       .tie {
@@ -270,176 +179,78 @@
       }
 
       .reset-btn {
-        background: linear-gradient(45deg, #3b82f6, #1d4ed8, #1e40af);
+        background: linear-gradient(45deg, #3b82f6, #1d4ed8);
         color: white;
         border: none;
-        padding: 18px 35px;
-        font-size: 1.2em;
+        padding: 15px 30px;
+        font-size: 1.1em;
         font-weight: 700;
-        border-radius: 30px;
+        border-radius: 25px;
         cursor: pointer;
-        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4),
-          inset 0 1px 0 rgba(255, 255, 255, 0.2);
-        margin: 15px;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        position: relative;
-        overflow: hidden;
-      }
-
-      .reset-btn::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(
-          90deg,
-          transparent,
-          rgba(255, 255, 255, 0.3),
-          transparent
-        );
-        transition: left 0.5s ease;
-      }
-
-      .reset-btn:hover::before {
-        left: 100%;
+        transition: all 0.3s ease;
+        margin: 10px auto;
       }
 
       .reset-btn:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 12px 35px rgba(59, 130, 246, 0.6),
-          inset 0 1px 0 rgba(255, 255, 255, 0.3);
-        background: linear-gradient(45deg, #60a5fa, #3b82f6, #2563eb);
-      }
-
-      .reset-btn:active {
-        transform: translateY(-1px);
+        background: linear-gradient(45deg, #60a5fa, #2563eb);
+        transform: translateY(-2px);
       }
 
       .score {
         display: flex;
         justify-content: space-around;
-        margin-top: 25px;
-        font-size: 1.2em;
+        margin-top: 20px;
+        font-size: 1.1em;
         font-weight: 600;
+        flex-wrap: wrap;
+        gap: 10px;
       }
 
       .score-item {
-        background: linear-gradient(
-          145deg,
-          rgba(30, 58, 138, 0.6),
-          rgba(15, 23, 42, 0.8)
-        );
-        padding: 15px 25px;
-        border-radius: 15px;
+        background: rgba(30, 58, 138, 0.3);
+        padding: 12px 20px;
+        border-radius: 12px;
         border: 2px solid rgba(59, 130, 246, 0.3);
         backdrop-filter: blur(10px);
-        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3),
-          inset 0 1px 0 rgba(255, 255, 255, 0.1);
-        transition: all 0.3s ease;
-      }
-
-      .score-item:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 12px 35px rgba(0, 0, 0, 0.4),
-          inset 0 1px 0 rgba(255, 255, 255, 0.2);
       }
 
       .score-x {
         color: #f472b6;
-        text-shadow: 0 0 10px rgba(244, 114, 182, 0.5);
       }
 
       .score-o {
         color: #34d399;
-        text-shadow: 0 0 10px rgba(52, 211, 153, 0.5);
       }
 
-      .floating-particles {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        pointer-events: none;
-        z-index: -1;
-      }
-
-      .particle {
-        position: absolute;
-        width: 3px;
-        height: 3px;
-        background: rgba(96, 165, 250, 0.4);
-        border-radius: 50%;
-        animation: float 25s linear infinite;
-      }
-
-      .particle:nth-child(2n) {
-        background: rgba(52, 211, 153, 0.3);
-        width: 2px;
-        height: 2px;
-      }
-
-      .particle:nth-child(3n) {
-        background: rgba(167, 139, 250, 0.3);
-        width: 4px;
-        height: 4px;
-      }
-
-      @keyframes float {
-        0% {
-          transform: translateY(100vh) rotate(0deg);
-          opacity: 0;
+      @media (max-width: 480px) {
+        h1 {
+          font-size: 2em;
         }
-        10% {
-          opacity: 1;
-        }
-        90% {
-          opacity: 1;
-        }
-        100% {
-          transform: translateY(-100vh) rotate(360deg);
-          opacity: 0;
-        }
-      }
 
-      /* Add ambient glow effect to body */
-      body::before {
-        content: "";
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: radial-gradient(
-            circle at 20% 50%,
-            rgba(59, 130, 246, 0.1) 0%,
-            transparent 50%
-          ),
-          radial-gradient(
-            circle at 80% 20%,
-            rgba(52, 211, 153, 0.1) 0%,
-            transparent 50%
-          ),
-          radial-gradient(
-            circle at 40% 80%,
-            rgba(167, 139, 250, 0.1) 0%,
-            transparent 50%
-          );
-        pointer-events: none;
-        z-index: -1;
+        .game-info {
+          font-size: 1em;
+        }
+
+        .reset-btn {
+          padding: 12px 20px;
+          font-size: 1em;
+        }
+
+        .score {
+          flex-direction: column;
+          align-items: center;
+        }
+
+        .score-item {
+          width: 80%;
+          text-align: center;
+        }
       }
     </style>
   </head>
   <body>
-    <div class="floating-particles"></div>
-
     <div class="game-container">
       <h1>✨ Tic-Tac-Toe ✨</h1>
-
       <div class="game-info">
         <span class="current-player">Player X</span>'s turn
       </div>
@@ -457,7 +268,6 @@
       </div>
 
       <div class="game-status" id="gameStatus"></div>
-
       <button class="reset-btn" onclick="resetGame()">New Game</button>
 
       <div class="score">
@@ -476,30 +286,17 @@
       const winPatterns = [
         [0, 1, 2],
         [3, 4, 5],
-        [6, 7, 8], // rows
+        [6, 7, 8],
         [0, 3, 6],
         [1, 4, 7],
-        [2, 5, 8], // columns
+        [2, 5, 8],
         [0, 4, 8],
-        [2, 4, 6], // diagonals
+        [2, 4, 6],
       ];
 
       const cells = document.querySelectorAll(".cell");
       const gameStatus = document.getElementById("gameStatus");
       const currentPlayerDisplay = document.querySelector(".current-player");
-
-      // Initialize particles
-      function createParticles() {
-        const particleContainer = document.querySelector(".floating-particles");
-        for (let i = 0; i < 25; i++) {
-          const particle = document.createElement("div");
-          particle.className = "particle";
-          particle.style.left = Math.random() * 100 + "%";
-          particle.style.animationDelay = Math.random() * 25 + "s";
-          particle.style.animationDuration = Math.random() * 15 + 20 + "s";
-          particleContainer.appendChild(particle);
-        }
-      }
 
       cells.forEach((cell) => {
         cell.addEventListener("click", handleCellClick);
@@ -507,7 +304,6 @@
 
       function handleCellClick(e) {
         const cellIndex = parseInt(e.target.getAttribute("data-index"));
-
         if (board[cellIndex] !== "" || !gameActive) return;
 
         board[cellIndex] = currentPlayer;
@@ -534,15 +330,13 @@
       }
 
       function checkWin() {
-        return winPatterns.some((pattern) => {
-          const [a, b, c] = pattern;
+        return winPatterns.some(([a, b, c]) => {
           return board[a] && board[a] === board[b] && board[a] === board[c];
         });
       }
 
       function highlightWinningCells() {
-        winPatterns.forEach((pattern) => {
-          const [a, b, c] = pattern;
+        winPatterns.forEach(([a, b, c]) => {
           if (board[a] && board[a] === board[b] && board[a] === board[c]) {
             cells[a].classList.add("winning");
             cells[b].classList.add("winning");
@@ -553,8 +347,9 @@
 
       function updateCurrentPlayerDisplay() {
         currentPlayerDisplay.textContent = `Player ${currentPlayer}`;
-        const gameInfo = document.querySelector(".game-info");
-        gameInfo.innerHTML = `<span class="current-player">Player ${currentPlayer}</span>'s turn`;
+        document.querySelector(
+          ".game-info"
+        ).innerHTML = `<span class="current-player">Player ${currentPlayer}</span>'s turn`;
       }
 
       function updateScoreDisplay() {
@@ -578,8 +373,6 @@
         updateCurrentPlayerDisplay();
       }
 
-      // Initialize the game
-      createParticles();
       updateCurrentPlayerDisplay();
     </script>
   </body>

@@ -9,35 +9,17 @@
   </head>
   <body>
     <header
-      class="bg-gradient-to-r from-[#272457] via-[#05224d] to-[#346768] py-6 shadow-md w-full z-50 border-b-4 border-[#0de5ed] relative"
+      class="bg-black w-full py-4 sm:py-5 md:py-6 px-4 sm:px-6 md:px-8 shadow-md z-50 fixed top-0 left-0 flex justify-center items-center"
     >
-      <div
-        class="max-w-7xl mx-auto px-6 flex items-center justify-between relative"
-      >
-        <!-- Left: Logo -->
-        <div class="z-10">
+      <div class="max-w-7xl mx-auto flex items-center justify-between relative">
+        <!-- Left: Responsive Logo -->
+        <div class="flex-shrink-0">
           <img
-            src="./images/omd.png"
-            alt="OMDX Logo"
-            class="w-12 h-12 rounded-full border-2 border-white shadow-lg"
+            src="../images/omd netflix.png"
+            alt="OMD_X Logo"
+            class="h-8 sm:h-10 md:h-12 w-auto object-contain"
           />
         </div>
-
-        <!-- Center: Brand Name + Tagline -->
-        <div class="absolute left-1/2 transform -translate-x-1/2 text-center">
-          <h1
-            class="text-3xl font-extrabold bg-gradient-to-r from-[#e0deff] via-[#367de9] to-[#0de5ed] bg-clip-text text-transparent"
-          >
-            OMD_X
-          </h1>
-          <p class="text-sm text-white tracking-wide">
-            Explore the
-            <span class="text-orange-400 font-semibold">X Factor</span>
-          </p>
-        </div>
-
-        <!-- Right: Empty (for spacing balance) -->
-        <div class="w-12 h-12 invisible"></div>
       </div>
     </header>
 
@@ -300,17 +282,15 @@
 
     <!-- Footer -->
     <footer
-      class="fixed bottom-0 w-full bg-black bg-opacity-90 text-gray-300 text-center text-xs py-3 border-t border-gray-700 z-50"
+      class="fixed bottom-0 w-full bg-black bg-opacity-90 text-gray-300 text-center text-xs sm:text-sm py-4 sm:py-6 md:py-8 border-t border-gray-700 z-50"
     >
-      <p>
-        &copy; 2025 <span class="font-semibold text-white">omdx</span>. All
-        rights reserved.
-      </p>
-      <p class="mt-1 text-gray-400">
-        A proud creation by <span class="font-semibold text-white">OMD</span> –
-        Discover the Possibilities.
-      </p>
+      <h1
+        class="text-white font-extrabold text-base sm:text-lg md:text-2xl lg:text-3xl leading-tight"
+      >
+        Explore the <span class="text-red-600">X Factor</span>
+      </h1>
     </footer>
+
     <script type="module" src="new_game.js"></script>
     <script>
       // Expose selectMode to HTML onclick

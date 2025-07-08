@@ -13,10 +13,16 @@
 
 body {
   font-family: "Arial", sans-serif;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background-color: #000;
   min-height: 100vh;
   overflow: hidden;
   user-select: none;
+}
+
+.logo img {
+  margin-left: 30px;
+  height: 32px;
+  width: auto;
 }
 
 .lucky-survive {
@@ -47,19 +53,19 @@ body {
   height: 100vh;
   background: linear-gradient(
     to bottom,
-    #87ceeb 0%,
-    #98fb98 20%,
-    #90ee90 40%,
-    #8fbc8f 60%,
-    #228b22 80%,
-    #006400 100%
+    #cecaca 0%,
+    /* Light gray */ #b3b2b2 20%,
+    /* Silver */ #a9a9a9 40%,
+    /* Dark gray */ #808080 60%,
+    /* Gray */ #696969 80%,
+    /* Dim gray */ #505050 100% /* Very dark gray */
   );
 }
 
 /* Finish Line */
 .finish-line {
   position: absolute;
-  bottom: 10%;
+  bottom: 15%;
   left: 0;
   right: 0;
   height: 4px;
@@ -76,7 +82,7 @@ body {
 /* Starting Line */
 .starting-line {
   position: absolute;
-  top: 18%;
+  top: 12%;
   left: 0;
   right: 0;
   height: 4px;
@@ -600,5 +606,9 @@ body {
   .doll-body {
     width: 50px;
     height: 50px;
+  }
+
+  .logo img {
+    height: 24px;
   }
 }

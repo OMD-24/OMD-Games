@@ -6,7 +6,7 @@ let gameState = {
   isGameActive: false,
   players: {},
   gameStartTime: 0,
-  currentTimer: 60.0,
+  currentTimer: 30.0,
   lightChangeTimeout: null,
   gameInterval: null,
   botIntervals: [],
@@ -19,7 +19,7 @@ let gameState = {
 
 // Configuration
 const config = {
-  gameTime: 60.0,
+  gameTime: 30.0,
   moveDistance: 2.5,
   greenLightDuration: { min: 2000, max: 5000 },
   redLightDuration: { min: 1500, max: 4000 },
@@ -268,7 +268,7 @@ function handleScheduledBotDeaths() {
   console.log("Checking for bot deaths at round", gameState.redLightCount); // Debug log
 
   Object.entries(gameState.players).forEach(([id, p]) => {
-    if (p.isBot && !p.eliminated) {
+    if (p.isBot && !p.eliminated && !p.finished) {
       const deathRound = gameState.botDeathSchedule[id];
       console.log(
         `Bot ${id} scheduled for round ${deathRound}, current round ${gameState.redLightCount}`
@@ -413,8 +413,11 @@ function movePlayer(id, direction) {
     p.finished = true;
     p.element.classList.add("finished");
 
-    // Only mark as finished — don't declare victory yet
-    checkForGameCompletion(); // new function
+    if (!p.isBot) {
+      showVictoryScreen(p.name); // Immediately show victory for human
+    } else {
+      checkForGameCompletion(); // Let bot finish silently
+    }
   }
 
   updateUI();
@@ -433,7 +436,7 @@ function checkForGameCompletion() {
       const winnerNames = winners.map((p) => p.name).join(" & ");
       showVictoryScreen(winnerNames);
     } else {
-      triggerGameOver("No human players finished!");
+      triggerGameOver("You couldn't cross finish line!");
     }
   }
 }
@@ -600,7 +603,7 @@ function createRealisticBotSchedule() {
       gameState.botDeathSchedule[id] = randomBetween(3, 4);
     } else {
       // Remaining bots get elimination rounds 3-6
-      gameState.botDeathSchedule[id] = randomBetween(3, 6);
+      gameState.botDeathSchedule[id] = randomBetween(2, 6);
     }
   });
 
