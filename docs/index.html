@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Omdx Gaming Hub - Your Ultimate Gaming Destination</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎮</text></svg>"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header class="header" id="header">
+      <div class="nav-container">
+        <div class="logo">
+          <img src="./images/omd netflix.png" alt="OMD_X" />
+        </div>
+
+        <nav>
+          <ul class="nav-links">
+            <li><a href="#home">Home</a></li>
+            <li><a href="#games">Games</a></li>
+            <li><a href="#trending">Trending</a></li>
+            <li><a href="#categories">Categories</a></li>
+          </ul>
+        </nav>
+
+        <button class="mobile-menu-btn" id="mobileMenuBtn">
+          <i class="fas fa-bars"></i>
+        </button>
+
+        <div class="search-profile">
+          <input
+            type="text"
+            class="search-box"
+            placeholder="Search games..."
+            id="searchInput"
+          />
+          <div class="profile-icon">O</div>
+        </div>
+
+        <div class="mobile-menu" id="mobileMenu">
+          <input type="text" class="search-box" placeholder="Search games..." />
+          <ul class="nav-links">
+            <li><a href="#home">Home</a></li>
+            <li><a href="#games">Games</a></li>
+            <li><a href="#trending">Trending</a></li>
+            <li><a href="#categories">Categories</a></li>
+          </ul>
+        </div>
+      </div>
+    </header>
+
+    <section class="hero">
+      <div class="hero-content">
+        <h1 class="hero-title">Red Light Green Light</h1>
+        <p class="hero-description">
+          Experience the thrill of the classic childhood game with a modern
+          twist. Stop and go when the light changes in this intense survival
+          game.
+        </p>
+        <div class="hero-buttons">
+          <a href="./games/red-light-green-light.html" class="btn btn-primary"
+            >▶ Play Now</a
+          >
+          <a href="#info" class="btn btn-secondary">ℹ More Info</a>
+        </div>
+      </div>
+    </section>
+
+    <main class="content">
+      <div class="categories">
+        <button class="category-btn active" onclick="filterGames('all')">
+          All Games
+        </button>
+        <button class="category-btn" onclick="filterGames('action')">
+          Action
+        </button>
+        <button class="category-btn" onclick="filterGames('classic')">
+          Classic
+        </button>
+      </div>
+
+      <section class="section">
+        <h2 class="section-title">Featured Games</h2>
+        <div class="games-row">
+          <div class="games-grid" id="featuredGames">
+            <!-- Featured games will be populated here -->
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2 class="section-title">Popular Games</h2>
+        <div class="games-row">
+          <div class="games-grid" id="popularGames">
+            <!-- Popular games will be populated here -->
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2 class="section-title">Classic Games</h2>
+        <div class="games-row">
+          <div class="games-grid" id="classicGames">
+            <!-- Classic games will be populated here -->
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer
+      class="bg-black text-white py-6 sm:py-10 text-center flex flex-col items-center mb-6 sm:mb-10 pb-4 sm:pb-7"
+    >
+      <!-- Tagline -->
+      <h2
+        class="text-lg sm:text-xl font-semibold text-red-600 mb-3 sm:mb-4 tracking-wide px-4"
+      >
+        Explore The <span class="italic underline">X</span> Factor
+      </h2>
+
+      <!-- Social Icons with Padding & Margin -->
+      <div
+        class="mb-4 sm:mb-6 px-4 sm:px-6 w-full max-w-md text-xl sm:text-2xl flex justify-around"
+      >
+        <a
+          href="https://www.instagram.com/omd_x_?igsh=eWt4aTE2cGRyZmpp"
+          target="_blank"
+          class="mx-4 sm:mx-10 px-2 sm:px-4 py-2 hover:text-pink-500 transition-transform transform hover:scale-125"
+        >
+          <i class="fab fa-instagram"></i>
+        </a>
+        <a
+          href="https://x.com/omd_x_?t=9JA6Ji--iI8d4fDBnifdKw&s=09"
+          target="_blank"
+          class="mx-4 sm:mx-10 px-2 sm:px-4 py-2 hover:text-sky-400 transition-transform transform hover:scale-125"
+        >
+          <i class="fab fa-twitter"></i>
+        </a>
+        <a
+          href="https://youtube.com/@omd_x?si=rOSVWt5kS9zX6lNp"
+          target="_blank"
+          class="mx-4 sm:mx-10 px-2 sm:px-4 py-2 hover:text-red-600 transition-transform transform hover:scale-125"
+        >
+          <i class="fab fa-youtube"></i>
+        </a>
+      </div>
+
+      <!-- Footer Bottom Text -->
+      <p class="text-xs sm:text-sm text-gray-400 px-4">
+        &copy; 2025 @OMD_X. All rights reserved.
+      </p>
+    </footer>
+    <script src="script.js"></script>
+  </body>
+</html>

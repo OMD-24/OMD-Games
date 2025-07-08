@@ -1,0 +1,604 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.doll-flip {
+  transform: rotateY(180deg) scale(0.4) translateX(-50%);
+}
+.angry {
+  filter: drop-shadow(0 0 5px red);
+}
+
+body {
+  font-family: "Arial", sans-serif;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+  overflow: hidden;
+  user-select: none;
+}
+
+.lucky-survive {
+  animation: blink 0.4s ease-in-out 4;
+  border: 3px solid #ffeb3b;
+  box-shadow: 0 0 10px #ffeb3b;
+}
+
+@keyframes blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.3;
+  }
+}
+
+.player.finished {
+  border: 2px solid limegreen;
+  opacity: 0.9;
+}
+
+/* Game Field */
+.game-field {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  background: linear-gradient(
+    to bottom,
+    #87ceeb 0%,
+    #98fb98 20%,
+    #90ee90 40%,
+    #8fbc8f 60%,
+    #228b22 80%,
+    #006400 100%
+  );
+}
+
+/* Finish Line */
+.finish-line {
+  position: absolute;
+  bottom: 10%;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: repeating-linear-gradient(
+    90deg,
+    #000 0px,
+    #000 20px,
+    #fff 20px,
+    #fff 40px
+  );
+  z-index: 5;
+}
+
+/* Starting Line */
+.starting-line {
+  position: absolute;
+  top: 18%;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: repeating-linear-gradient(
+    90deg,
+    #000 0px,
+    #000 20px,
+    #fff 20px,
+    #fff 40px
+  );
+  z-index: 5;
+}
+
+/* Doll Container */
+.doll-container {
+  position: absolute;
+  top: 2%;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 40;
+  transition: transform 0.5s ease;
+}
+
+.doll-container.doll-flip {
+  transform: translateX(-50%) rotateY(180deg);
+}
+
+/* Player Styles */
+.player {
+  position: absolute;
+  width: 40px;
+  height: 60px;
+  transition: all 0.2s ease;
+  z-index: 10;
+}
+
+.player.eliminated {
+  opacity: 0.3;
+  transform: scale(0.8);
+}
+
+.player.bounce {
+  animation: bounce 0.2s ease;
+}
+
+@keyframes bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+/* Player Character */
+.character {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.character-head {
+  width: 20px;
+  height: 20px;
+  background: #fdbcb4;
+  border-radius: 50%;
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 2px solid #333;
+}
+
+.character-body {
+  width: 16px;
+  height: 25px;
+  position: absolute;
+  top: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-radius: 4px;
+}
+
+.character-legs {
+  width: 12px;
+  height: 15px;
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  border-radius: 4px;
+}
+
+/* Player Colors */
+.player-human .character-body,
+.player-human .character-legs {
+  background: #4caf50;
+}
+
+.player-human2 .character-body,
+.player-human2 .character-legs {
+  background: #2196f3;
+}
+
+.player-bot .character-body,
+.player-bot .character-legs {
+  background: #ff9800;
+}
+
+/* UI Elements */
+.ui-panel {
+  position: absolute;
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 15px;
+  border-radius: 10px;
+  z-index: 50;
+}
+
+.status-panel {
+  position: absolute;
+  top: 100px;
+  left: 10px;
+  min-width: 100px;
+  padding: 10px;
+  background: #222;
+  border-radius: 10px;
+  border: 2px solid #444;
+  color: white;
+  font-size: 14px;
+  text-align: center;
+}
+
+/* Container for traffic light */
+.traffic-light {
+  width: 30px;
+  height: 80px;
+  background-color: #111;
+  border-radius: 8px;
+  padding: 5px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0 auto 10px auto;
+}
+
+/* Light circles */
+.traffic-light .light {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #333;
+  transition: background 0.3s, box-shadow 0.3s;
+}
+
+/* Active lights */
+.traffic-light .light.green.active {
+  background: #4caf50;
+  box-shadow: 0 0 10px #4caf50;
+}
+
+.traffic-light .light.red.active {
+  background: #f44336;
+  box-shadow: 0 0 10px #f44336;
+}
+
+/* Progress panel aligned right */
+.progress-panel {
+  position: absolute;
+  top: 100px;
+  right: 20px;
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  z-index: 50;
+}
+
+/* Each progress bar container */
+.progress-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+/* Player name label */
+.progress-name {
+  margin-bottom: 5px;
+  font-size: 12px;
+  color: white;
+}
+
+/* Vertical progress bar */
+.progress-bar-vertical {
+  width: 20px;
+  height: 120px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column-reverse;
+}
+
+/* Fill from bottom to top */
+.progress-fill-vertical {
+  width: 100%;
+  height: 0%;
+  background: limegreen;
+  transition: height 0.3s ease;
+}
+
+/* Percentage text */
+.progress-text-vertical {
+  margin-top: 5px;
+  font-size: 12px;
+  color: white;
+}
+/* Controls */
+.controls {
+  position: absolute;
+  bottom: 60px;
+  z-index: 50;
+}
+
+.controls-left {
+  left: 20px;
+}
+
+.controls-right {
+  right: 20px;
+}
+
+.control-pad {
+  display: grid;
+  grid-template-areas:
+    ". up ."
+    "left down right";
+  gap: 5px;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 10px;
+  border-radius: 10px;
+}
+
+.control-btn {
+  width: 50px;
+  height: 50px;
+  border: none;
+  border-radius: 8px;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.1s ease;
+  color: white;
+}
+
+.control-btn:hover {
+  transform: scale(1.1);
+}
+
+.control-btn:active {
+  transform: scale(0.95);
+}
+
+.control-btn.up {
+  grid-area: up;
+  background: #4caf50;
+}
+.control-btn.down {
+  grid-area: down;
+  background: #4caf50;
+}
+.control-btn.left {
+  grid-area: left;
+  background: #4caf50;
+}
+.control-btn.right {
+  grid-area: right;
+  background: #4caf50;
+}
+
+.control-btn.player2 {
+  background: #2196f3;
+}
+
+/* Modal Styles */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+}
+
+.modal-content {
+  background: white;
+  padding: 30px;
+  border-radius: 15px;
+  text-align: center;
+  max-width: 500px;
+  width: 90%;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.modal h2 {
+  color: #333;
+  margin-bottom: 20px;
+  font-size: 2.5em;
+}
+
+.modal p {
+  margin-bottom: 15px;
+  color: #666;
+  line-height: 1.6;
+}
+
+.btn {
+  background: #4caf50;
+  color: white;
+  border: none;
+  padding: 12px 30px;
+  border-radius: 25px;
+  font-size: 16px;
+  cursor: pointer;
+  margin: 10px;
+  transition: all 0.3s ease;
+}
+
+.btn:hover {
+  background: #45a049;
+  transform: translateY(-2px);
+}
+
+.btn.secondary {
+  background: #2196f3;
+}
+
+.btn.secondary:hover {
+  background: #1976d2;
+}
+
+/* Doll Styles */
+.doll {
+  width: 100px;
+  height: 150px;
+  position: relative;
+  transform: scale(0.8);
+}
+
+.doll-face {
+  width: 80px;
+  height: 80px;
+  background: #fdbcb4;
+  border-radius: 50%;
+  position: relative;
+  margin: 0 auto 10px;
+  border: 3px solid #333;
+}
+
+.doll-eye {
+  width: 12px;
+  height: 12px;
+  background: #000;
+  border-radius: 50%;
+  position: absolute;
+  top: 30px;
+}
+
+.doll-eye.left {
+  left: 20px;
+}
+.doll-eye.right {
+  right: 20px;
+}
+
+.doll-eye.angry {
+  background: #ff0000;
+  box-shadow: 0 0 10px #ff0000;
+}
+
+.doll-mouth {
+  width: 30px;
+  height: 5px;
+  background: #8b4513;
+  border-radius: 3px;
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.doll-body {
+  width: 60px;
+  height: 60px;
+  background: #ff69b4;
+  border-radius: 10px;
+  margin: 0 auto;
+  border: 2px solid #333;
+}
+
+.hidden {
+  display: none;
+}
+
+/* Elimination Effect */
+.elimination-spot {
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  background: radial-gradient(circle, #ff0000, #8b0000);
+  border-radius: 50%;
+  z-index: 20;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 1;
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .controls {
+    bottom: 80px; /* Slightly higher on mobile for better visibility */
+  }
+
+  .control-btn {
+    width: 35px;
+    height: 35px;
+    font-size: 14px;
+  }
+
+  .ui-panel,
+  .status-panel {
+    padding: 5px;
+    font-size: 8px;
+    min-width: 60px;
+    left: 2px;
+    margin-left: 0%;
+    background: rgb(75, 71, 71);
+    border: 0;
+    padding: 0%;
+  }
+  .progress-panel {
+    top: 100px;
+    left: auto;
+    right: 10px;
+    flex-direction: row;
+    gap: 10px;
+    max-width: 100%;
+    align-items: flex-end;
+    background: transparent;
+    z-index: 100;
+    margin: 0;
+    border: 0;
+    padding: 0%;
+  }
+
+  .progress-container {
+    align-items: center;
+  }
+
+  .progress-bar-vertical {
+    height: 60px;
+    width: 12px;
+  }
+
+  .progress-name,
+  .progress-text-vertical {
+    font-size: 9px;
+    text-align: center;
+  }
+  .doll-container {
+    transform: translateX(-50%) scale(0.6);
+    top: 10px;
+  }
+
+  .doll {
+    width: 70px;
+    height: 100px;
+  }
+
+  .doll-face {
+    width: 60px;
+    height: 60px;
+  }
+
+  .doll-eye {
+    width: 8px;
+    height: 8px;
+    top: 22px;
+  }
+
+  .doll-eye.left {
+    left: 14px;
+  }
+
+  .doll-eye.right {
+    right: 14px;
+  }
+
+  .doll-mouth {
+    width: 20px;
+    height: 4px;
+    bottom: 14px;
+  }
+
+  .doll-body {
+    width: 50px;
+    height: 50px;
+  }
+}

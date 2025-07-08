@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Red Light Green Light</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="stylesheet" href="newstyle.css" />
+  </head>
+  <body>
+    <header
+      class="bg-gradient-to-r from-[#272457] via-[#05224d] to-[#346768] py-6 shadow-md w-full z-50 border-b-4 border-[#0de5ed] relative"
+    >
+      <div
+        class="max-w-7xl mx-auto px-6 flex items-center justify-between relative"
+      >
+        <!-- Left: Logo -->
+        <div class="z-10">
+          <img
+            src="./images/omd.png"
+            alt="OMDX Logo"
+            class="w-12 h-12 rounded-full border-2 border-white shadow-lg"
+          />
+        </div>
+
+        <!-- Center: Brand Name + Tagline -->
+        <div class="absolute left-1/2 transform -translate-x-1/2 text-center">
+          <h1
+            class="text-3xl font-extrabold bg-gradient-to-r from-[#e0deff] via-[#367de9] to-[#0de5ed] bg-clip-text text-transparent"
+          >
+            OMD_X
+          </h1>
+          <p class="text-sm text-white tracking-wide">
+            Explore the
+            <span class="text-orange-400 font-semibold">X Factor</span>
+          </p>
+        </div>
+
+        <!-- Right: Empty (for spacing balance) -->
+        <div class="w-12 h-12 invisible"></div>
+      </div>
+    </header>
+
+    <!-- Game Field -->
+    <div class="game-field relative">
+      <!-- Finish Line -->
+      <div class="finish-line"></div>
+
+      <!-- Starting Line -->
+      <div class="starting-line"></div>
+
+      <!-- Doll -->
+      <div
+        id="dollContainer"
+        class="absolute top-[-90px] left-1/2 transform -translate-x-1/2 z-40 scale-[0.3] transition-transform duration-500"
+      >
+        <div class="relative w-[200px] h-[520px]">
+          <!-- Face placeholder -->
+          <div
+            id="dollImage"
+            class="absolute top-[20px] left-1/2 transform -translate-x-1/2 w-[120px] h-[130px] rounded-full z-20 flex items-center justify-center bg-black"
+          >
+            <!-- Eyes -->
+            <div class="flex gap-4">
+              <div
+                class="w-[20px] h-[20px] bg-black rounded-full doll-eye transition-all duration-200"
+              ></div>
+              <div
+                class="w-[20px] h-[20px] bg-black rounded-full doll-eye transition-all duration-200"
+              ></div>
+            </div>
+          </div>
+
+          <!-- Hair Buns -->
+          <div
+            class="absolute top-[90px] left-[5px] w-[40px] h-[40px] rounded-full z-40"
+            style="background-color: #000000"
+          ></div>
+          <div
+            class="absolute top-[90px] right-[5px] w-[40px] h-[40px] rounded-full z-40"
+            style="background-color: #000000"
+          ></div>
+
+          <!-- Neck -->
+          <div
+            class="absolute top-[120px] left-1/2 transform -translate-x-1/2 w-[40px] h-[20px] rounded-b-full bg-yellow-200 z-10"
+          ></div>
+
+          <!-- Shirt Collar -->
+          <div
+            class="absolute top-[135px] left-1/2 transform -translate-x-1/2 w-[100px] h-[20px] rounded-md bg-orange-300 z-10"
+          ></div>
+
+          <!-- Arms -->
+          <div
+            class="absolute top-[160px] left-[-10px] w-[35px] h-[130px] rounded-full bg-yellow-200 z-0"
+          ></div>
+          <div
+            class="absolute top-[160px] right-[-10px] w-[35px] h-[130px] rounded-full bg-yellow-200 z-0"
+          ></div>
+
+          <!-- Palms -->
+          <div
+            class="absolute top-[285px] left-[-15px] w-[25px] h-[25px] rounded-full bg-yellow-200 z-10"
+          ></div>
+          <div
+            class="absolute top-[285px] right-[-15px] w-[25px] h-[25px] rounded-full bg-yellow-200 z-10"
+          ></div>
+
+          <!-- Dress -->
+          <div
+            class="absolute top-[155px] left-1/2 transform -translate-x-1/2 w-[140px] h-[180px] rounded-xl bg-orange-500 z-0"
+          ></div>
+
+          <!-- Legs -->
+          <div
+            class="absolute top-[335px] left-[45px] w-[30px] h-[140px] bg-white rounded-t-full rotate-180 z-0"
+          ></div>
+          <div
+            class="absolute top-[335px] right-[45px] w-[30px] h-[140px] bg-white rounded-t-full rotate-180 z-0"
+          ></div>
+
+          <!-- Shoes -->
+          <div
+            class="absolute bottom-[10px] left-[30px] w-[50px] h-[30px] bg-black rounded-t-xl z-0"
+          ></div>
+          <div
+            class="absolute bottom-[10px] right-[30px] w-[50px] h-[30px] bg-black rounded-t-xl z-0"
+          ></div>
+        </div>
+      </div>
+
+      <!-- Players will be dynamically added here -->
+    </div>
+
+    <!-- UI Panels -->
+    <div class="ui-panel status-panel">
+      <div
+        style="
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          margin-bottom: 10px;
+        "
+      >
+        <div class="traffic-light" id="lightIndicator">
+          <div class="light red" id="lightRed"></div>
+          <div class="light green" id="lightGreen"></div>
+        </div>
+
+        <span id="gameStatus">Select Game Mode</span>
+      </div>
+      <div>Time: <span id="timer">45.0</span>s</div>
+      <div>Players Alive: <span id="playersAlive">0</span></div>
+    </div>
+
+    <div class="ui-panel progress-panel" id="progressPanel">
+      <!-- Progress bars will be added dynamically -->
+    </div>
+
+    <!-- Controls for Single Player -->
+    <div class="controls controls-left hidden" id="singlePlayerControls">
+      <div class="control-pad">
+        <button class="control-btn up" data-player="player" data-dir="up">
+          ↑
+        </button>
+        <button class="control-btn left" data-player="player" data-dir="left">
+          ←
+        </button>
+        <button class="control-btn down" data-player="player" data-dir="down">
+          ↓
+        </button>
+        <button class="control-btn right" data-player="player" data-dir="right">
+          →
+        </button>
+      </div>
+    </div>
+
+    <!-- Controls for Multiplayer -->
+    <div class="controls controls-left hidden" id="multiplayerControlsLeft">
+      <div class="control-pad">
+        <button class="control-btn up" data-player="player1" data-dir="up">
+          ↑
+        </button>
+        <button class="control-btn left" data-player="player1" data-dir="left">
+          ←
+        </button>
+        <button class="control-btn down" data-player="player1" data-dir="down">
+          ↓
+        </button>
+        <button
+          class="control-btn right"
+          data-player="player1"
+          data-dir="right"
+        >
+          →
+        </button>
+      </div>
+      <div
+        style="
+          text-align: center;
+          margin-top: 5px;
+          color: white;
+          font-size: 12px;
+        "
+      >
+        Player 1
+      </div>
+    </div>
+
+    <div class="controls controls-right hidden" id="multiplayerControlsRight">
+      <div class="control-pad">
+        <button
+          class="control-btn up player2"
+          data-player="player2"
+          data-dir="up"
+        >
+          ↑
+        </button>
+        <button
+          class="control-btn left player2"
+          data-player="player2"
+          data-dir="left"
+        >
+          ←
+        </button>
+        <button
+          class="control-btn down player2"
+          data-player="player2"
+          data-dir="down"
+        >
+          ↓
+        </button>
+        <button
+          class="control-btn right player2"
+          data-player="player2"
+          data-dir="right"
+        >
+          →
+        </button>
+      </div>
+      <div
+        style="
+          text-align: center;
+          margin-top: 5px;
+          color: white;
+          font-size: 12px;
+        "
+      >
+        Player 2
+      </div>
+    </div>
+
+    <!-- Mode Selection Modal -->
+    <div class="modal" id="modeModal">
+      <div class="modal-content">
+        <h2>🎮 Red Light, Green Light</h2>
+        <p>Choose your game mode:</p>
+        <button class="btn" onclick="selectMode('single')">
+          🎯 Single Player
+        </button>
+        <button class="btn secondary" onclick="selectMode('multiplayer')">
+          👥 Multiplayer
+        </button>
+        <div style="margin-top: 20px; text-align: left; font-size: 14px">
+          <p><strong>🟢 Green Light:</strong> Move towards the finish line</p>
+          <p>
+            <strong>🔴 Red Light:</strong> Stop immediately or be eliminated
+          </p>
+          <p><strong>🏁 Goal:</strong> Be the first to reach the finish line</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Game Over Modal -->
+    <div class="modal hidden" id="gameOverModal">
+      <div class="modal-content">
+        <h2 id="gameOverTitle">Game Over</h2>
+        <p id="gameOverMessage"></p>
+        <div id="gameOverStats"></div>
+        <button class="btn" onclick="restartGame()">Play Again</button>
+        <button class="btn secondary" onclick="showModeSelection()">
+          Change Mode
+        </button>
+      </div>
+    </div>
+
+    <!-- Victory Modal -->
+    <div class="modal hidden" id="victoryModal">
+      <div class="modal-content">
+        <h2>🏆 Victory!</h2>
+        <p id="victoryMessage"></p>
+        <div id="victoryStats"></div>
+        <button class="btn" onclick="restartGame()">Play Again</button>
+        <button class="btn secondary" onclick="showModeSelection()">
+          Change Mode
+        </button>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer
+      class="fixed bottom-0 w-full bg-black bg-opacity-90 text-gray-300 text-center text-xs py-3 border-t border-gray-700 z-50"
+    >
+      <p>
+        &copy; 2025 <span class="font-semibold text-white">omdx</span>. All
+        rights reserved.
+      </p>
+      <p class="mt-1 text-gray-400">
+        A proud creation by <span class="font-semibold text-white">OMD</span> –
+        Discover the Possibilities.
+      </p>
+    </footer>
+    <script type="module" src="new_game.js"></script>
+    <script>
+      // Expose selectMode to HTML onclick
+      window.selectMode = selectMode;
+      window.restartGame = restartGame;
+      window.showModeSelection = showModeSelection;
+
+      // Initialize game
+      init();
+    </script>
+    <!-- Audio Elements -->
+    <audio id="greenSound" src="audios/audio_green.mp3"></audio>
+    <audio id="redSound" src="audios/audio_red.mp3"></audio>
+    <audio id="eliminateSound" src="audios/audio_eliminated.mp3"></audio>
+  </body>
+</html>

@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Rock Paper Scissors</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          sans-serif;
+        overflow-x: hidden;
+      }
+
+      .hidden {
+        display: none !important;
+      }
+
+      /* Menu Screen Styles */
+      .menu-screen {
+        min-height: 100vh;
+        background: linear-gradient(
+          135deg,
+          #6b46c1 0%,
+          #1e3a8a 50%,
+          #312e81 100%
+        );
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem;
+      }
+
+      .menu-container {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(12px);
+        border-radius: 1.5rem;
+        padding: 2rem;
+        max-width: 400px;
+        width: 100%;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+      }
+
+      .menu-title {
+        text-align: center;
+        margin-bottom: 2rem;
+      }
+
+      .menu-title h1 {
+        font-size: 3rem;
+        font-weight: bold;
+        color: white;
+        margin-bottom: 0.5rem;
+      }
+
+      .menu-title p {
+        font-size: 1.25rem;
+        color: #93c5fd;
+      }
+
+      .menu-buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .menu-btn {
+        width: 100%;
+        background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
+        color: white;
+        font-weight: 600;
+        padding: 1rem 1.5rem;
+        border-radius: 0.75rem;
+        border: none;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.75rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      }
+
+      .menu-btn:hover {
+        background: linear-gradient(135deg, #0891b2 0%, #2563eb 100%);
+        transform: scale(1.05);
+      }
+
+      .menu-btn.multiplayer {
+        background: linear-gradient(135deg, #ec4899 0%, #f43f5e 100%);
+      }
+
+      .menu-btn.multiplayer:hover {
+        background: linear-gradient(135deg, #db2777 0%, #e11d48 100%);
+      }
+
+      /* Game Screen Styles */
+      .game-screen {
+        min-height: 100vh;
+        background: linear-gradient(
+          135deg,
+          #6b46c1 0%,
+          #1e3a8a 50%,
+          #312e81 100%
+        );
+        padding: 1rem;
+      }
+
+      .game-container {
+        max-width: 1024px;
+        margin: 0 auto;
+      }
+
+      .game-header {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(12px);
+        border-radius: 1rem;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .back-btn,
+      .reset-btn {
+        background: none;
+        border: none;
+        color: white;
+        cursor: pointer;
+        font-size: 1rem;
+        transition: color 0.2s ease;
+      }
+
+      .back-btn:hover,
+      .reset-btn:hover {
+        color: #93c5fd;
+      }
+
+      .game-title {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: white;
+      }
+
+      .scoreboard {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(12px);
+        border-radius: 1rem;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .score-item {
+        text-align: center;
+      }
+
+      .score-label {
+        font-weight: 600;
+        margin-bottom: 0.25rem;
+      }
+
+      .score-label.player1 {
+        color: #22d3ee;
+      }
+
+      .score-label.player2 {
+        color: #f472b6;
+      }
+
+      .score-value {
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: white;
+      }
+
+      .round-info {
+        text-align: center;
+      }
+
+      .round-label {
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 0.875rem;
+        margin-bottom: 0.25rem;
+      }
+
+      .round-value {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: white;
+      }
+
+      .game-area {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(12px);
+        border-radius: 1rem;
+        padding: 2rem;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+      }
+
+      .result-display {
+        text-align: center;
+        margin-bottom: 2rem;
+      }
+
+      .result-choices {
+        display: flex;
+        justify-content: center;
+        gap: 2rem;
+        margin-bottom: 1rem;
+      }
+
+      .result-choice {
+        text-align: center;
+      }
+
+      .result-icon {
+        font-size: 2.5rem;
+        margin-bottom: 0.5rem;
+      }
+
+      .result-player {
+        font-size: 0.875rem;
+      }
+
+      .result-player.player1 {
+        color: #22d3ee;
+      }
+
+      .result-player.player2 {
+        color: #f472b6;
+      }
+
+      .result-vs {
+        color: white;
+        align-self: center;
+      }
+
+      .result-text {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: white;
+        margin-bottom: 1rem;
+      }
+
+      .play-again-btn {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        color: white;
+        font-weight: 600;
+        padding: 0.5rem 1.5rem;
+        border-radius: 0.5rem;
+        border: none;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+
+      .play-again-btn:hover {
+        background: linear-gradient(135deg, #059669 0%, #047857 100%);
+        transform: scale(1.05);
+      }
+
+      .choice-section {
+        text-align: center;
+        margin-bottom: 2rem;
+      }
+
+      .choice-title {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: white;
+        margin-bottom: 1.5rem;
+      }
+
+      .choice-title.player1 {
+        color: #22d3ee;
+      }
+
+      .choice-title.player2 {
+        color: #f472b6;
+      }
+
+      .choice-subtitle {
+        color: rgba(255, 255, 255, 0.6);
+        margin-bottom: 1.5rem;
+      }
+
+      .choice-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 1.5rem;
+        flex-wrap: wrap;
+      }
+
+      .choice-btn {
+        background: rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(6px);
+        border-radius: 1rem;
+        padding: 1.5rem;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        cursor: pointer;
+        transition: all 0.2s ease;
+        text-align: center;
+        min-width: 120px;
+      }
+
+      .choice-btn:hover {
+        background: rgba(255, 255, 255, 0.3);
+        transform: scale(1.1);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      }
+
+      .choice-btn.player1:hover {
+        background: rgba(34, 211, 238, 0.3);
+      }
+
+      .choice-btn.player2:hover {
+        background: rgba(244, 114, 182, 0.3);
+      }
+
+      .choice-icon {
+        font-size: 3.75rem;
+        margin-bottom: 0.75rem;
+        transition: transform 0.2s ease;
+      }
+
+      .choice-btn:hover .choice-icon {
+        transform: scale(1.1);
+      }
+
+      .choice-name {
+        color: white;
+        font-weight: 600;
+        text-transform: capitalize;
+      }
+
+      @media (max-width: 768px) {
+        .menu-container {
+          padding: 1.5rem;
+        }
+
+        .game-header {
+          flex-direction: column;
+          gap: 1rem;
+          text-align: center;
+        }
+
+        .scoreboard {
+          flex-direction: column;
+          gap: 1rem;
+        }
+
+        .result-choices {
+          flex-direction: column;
+          gap: 1rem;
+        }
+
+        .choice-buttons {
+          flex-direction: column;
+          align-items: center;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Menu Screen -->
+    <div id="menu-screen" class="menu-screen">
+      <div class="menu-container">
+        <div class="menu-title">
+          <h1>RPS</h1>
+          <p>Rock Paper Scissors</p>
+        </div>
+        <div class="menu-buttons">
+          <button class="menu-btn" onclick="startGame('single')">
+            <span>👤</span>
+            Single Player
+          </button>
+          <button class="menu-btn multiplayer" onclick="startGame('multi')">
+            <span>👥</span>
+            Multiplayer
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Game Screen -->
+    <div id="game-screen" class="game-screen hidden">
+      <div class="game-container">
+        <!-- Header -->
+        <div class="game-header">
+          <button class="back-btn" onclick="goToMenu()">← Back to Menu</button>
+          <h1 class="game-title" id="game-title">vs AI</h1>
+          <button class="reset-btn" onclick="resetScores()">↻</button>
+        </div>
+
+        <!-- Scoreboard -->
+        <div class="scoreboard">
+          <div class="score-item">
+            <div class="score-label player1" id="player1-label">You</div>
+            <div class="score-value" id="player1-score">0</div>
+          </div>
+          <div class="round-info">
+            <div class="round-label">Round</div>
+            <div class="round-value" id="round-count">0</div>
+          </div>
+          <div class="score-item">
+            <div class="score-label player2" id="player2-label">AI</div>
+            <div class="score-value" id="player2-score">0</div>
+          </div>
+        </div>
+
+        <!-- Game Area -->
+        <div class="game-area">
+          <!-- Result Display -->
+          <div id="result-display" class="result-display hidden">
+            <div class="result-choices" id="result-choices">
+              <!-- Dynamic content -->
+            </div>
+            <div class="result-text" id="result-text"></div>
+            <button class="play-again-btn" onclick="resetGame()">
+              Play Again
+            </button>
+          </div>
+
+          <!-- Choice Section -->
+          <div id="choice-section" class="choice-section">
+            <h2 class="choice-title" id="choice-title">Choose your weapon!</h2>
+            <div class="choice-subtitle" id="choice-subtitle"></div>
+            <div class="choice-buttons" id="choice-buttons">
+              <!-- Dynamic content -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Game State
+      let gameState = {
+        mode: "menu",
+        player1Choice: "",
+        player2Choice: "",
+        aiChoice: "",
+        player1Score: 0,
+        player2Score: 0,
+        roundCount: 0,
+        currentPlayer: 1,
+        waitingForPlayer2: false,
+        showResult: false,
+      };
+
+      // Game choices
+      const choices = [
+        { name: "rock", icon: "✊" },
+        { name: "paper", icon: "✋" },
+        { name: "scissors", icon: "✌️" },
+      ];
+
+      // Utility functions
+      function getRandomChoice() {
+        const randomIndex = Math.floor(Math.random() * choices.length);
+        return choices[randomIndex].name;
+      }
+
+      function determineWinner(choice1, choice2) {
+        if (choice1 === choice2) return "tie";
+
+        const winConditions = {
+          rock: "scissors",
+          paper: "rock",
+          scissors: "paper",
+        };
+
+        return winConditions[choice1] === choice2 ? "player1" : "player2";
+      }
+
+      function getChoiceIcon(choice) {
+        const choiceData = choices.find((c) => c.name === choice);
+        return choiceData ? choiceData.icon : "❓";
+      }
+
+      // Game functions
+      function startGame(mode) {
+        gameState.mode = mode;
+        document.getElementById("menu-screen").classList.add("hidden");
+        document.getElementById("game-screen").classList.remove("hidden");
+
+        // Update UI based on mode
+        const gameTitle = document.getElementById("game-title");
+        const player1Label = document.getElementById("player1-label");
+        const player2Label = document.getElementById("player2-label");
+
+        if (mode === "single") {
+          gameTitle.textContent = "vs AI";
+          player1Label.textContent = "You";
+          player2Label.textContent = "AI";
+        } else {
+          gameTitle.textContent = "Player vs Player";
+          player1Label.textContent = "Player 1";
+          player2Label.textContent = "Player 2";
+        }
+
+        resetGame();
+        updateChoiceButtons();
+      }
+
+      function goToMenu() {
+        gameState.mode = "menu";
+        document.getElementById("game-screen").classList.add("hidden");
+        document.getElementById("menu-screen").classList.remove("hidden");
+        resetScores();
+      }
+
+      function resetScores() {
+        gameState.player1Score = 0;
+        gameState.player2Score = 0;
+        gameState.roundCount = 0;
+        updateScoreboard();
+        resetGame();
+      }
+
+      function resetGame() {
+        gameState.player1Choice = "";
+        gameState.player2Choice = "";
+        gameState.aiChoice = "";
+        gameState.currentPlayer = 1;
+        gameState.waitingForPlayer2 = false;
+        gameState.showResult = false;
+
+        document.getElementById("result-display").classList.add("hidden");
+        document.getElementById("choice-section").classList.remove("hidden");
+
+        updateChoiceButtons();
+      }
+
+      function updateScoreboard() {
+        document.getElementById("player1-score").textContent =
+          gameState.player1Score;
+        document.getElementById("player2-score").textContent =
+          gameState.player2Score;
+        document.getElementById("round-count").textContent =
+          gameState.roundCount;
+      }
+
+      function updateChoiceButtons() {
+        const choiceButtons = document.getElementById("choice-buttons");
+        const choiceTitle = document.getElementById("choice-title");
+        const choiceSubtitle = document.getElementById("choice-subtitle");
+
+        choiceButtons.innerHTML = "";
+
+        if (gameState.mode === "single") {
+          choiceTitle.textContent = "Choose your weapon!";
+          choiceTitle.className = "choice-title";
+          choiceSubtitle.textContent = "";
+
+          choices.forEach((choice) => {
+            const button = document.createElement("button");
+            button.className = "choice-btn";
+            button.onclick = () => playRound(choice.name);
+            button.innerHTML = `
+                        <div class="choice-icon">${choice.icon}</div>
+                        <div class="choice-name">${choice.name}</div>
+                    `;
+            choiceButtons.appendChild(button);
+          });
+        } else {
+          if (gameState.currentPlayer === 1) {
+            choiceTitle.textContent = "Player 1, make your choice!";
+            choiceTitle.className = "choice-title player1";
+            choiceSubtitle.textContent = "(Player 2, please look away 👀)";
+
+            choices.forEach((choice) => {
+              const button = document.createElement("button");
+              button.className = "choice-btn player1";
+              button.onclick = () => handleMultiplayerChoice(choice.name, true);
+              button.innerHTML = `
+                            <div class="choice-icon">${choice.icon}</div>
+                            <div class="choice-name">${choice.name}</div>
+                        `;
+              choiceButtons.appendChild(button);
+            });
+          } else if (gameState.waitingForPlayer2) {
+            choiceTitle.textContent = "Player 2, make your choice!";
+            choiceTitle.className = "choice-title player2";
+            choiceSubtitle.textContent = "Player 1 has already chosen ✅";
+
+            choices.forEach((choice) => {
+              const button = document.createElement("button");
+              button.className = "choice-btn player2";
+              button.onclick = () =>
+                handleMultiplayerChoice(choice.name, false);
+              button.innerHTML = `
+                            <div class="choice-icon">${choice.icon}</div>
+                            <div class="choice-name">${choice.name}</div>
+                        `;
+              choiceButtons.appendChild(button);
+            });
+          }
+        }
+      }
+
+      function playRound(playerChoice) {
+        if (gameState.mode === "single") {
+          const ai = getRandomChoice();
+          gameState.aiChoice = ai;
+          gameState.player1Choice = playerChoice;
+
+          const winner = determineWinner(playerChoice, ai);
+          let resultText = "";
+
+          if (winner === "player1") {
+            gameState.player1Score++;
+            resultText = "You Win! 🎉";
+          } else if (winner === "player2") {
+            gameState.player2Score++;
+            resultText = "AI Wins! 🤖";
+          } else {
+            resultText = "It's a Tie! 🤝";
+          }
+
+          gameState.roundCount++;
+          showResult(resultText);
+          updateScoreboard();
+        }
+      }
+
+      function handleMultiplayerChoice(choice, isPlayer1) {
+        if (isPlayer1) {
+          gameState.player1Choice = choice;
+          gameState.currentPlayer = 2;
+          gameState.waitingForPlayer2 = true;
+          updateChoiceButtons();
+        } else {
+          gameState.player2Choice = choice;
+          gameState.waitingForPlayer2 = false;
+          executeMultiplayerRound();
+        }
+      }
+
+      function executeMultiplayerRound() {
+        const winner = determineWinner(
+          gameState.player1Choice,
+          gameState.player2Choice
+        );
+        let resultText = "";
+
+        if (winner === "player1") {
+          gameState.player1Score++;
+          resultText = "Player 1 Wins! 🎉";
+        } else if (winner === "player2") {
+          gameState.player2Score++;
+          resultText = "Player 2 Wins! 🎉";
+        } else {
+          resultText = "It's a Tie! 🤝";
+        }
+
+        gameState.roundCount++;
+        showResult(resultText);
+        updateScoreboard();
+      }
+
+      function showResult(resultText) {
+        gameState.showResult = true;
+
+        const resultDisplay = document.getElementById("result-display");
+        const choiceSection = document.getElementById("choice-section");
+        const resultChoices = document.getElementById("result-choices");
+        const resultTextElement = document.getElementById("result-text");
+
+        // Hide choice section and show result
+        choiceSection.classList.add("hidden");
+        resultDisplay.classList.remove("hidden");
+
+        // Update result text
+        resultTextElement.textContent = resultText;
+
+        // Update result choices
+        resultChoices.innerHTML = "";
+
+        if (gameState.mode === "single") {
+          resultChoices.innerHTML = `
+                    <div class="result-choice">
+                        <div class="result-icon">${getChoiceIcon(
+                          gameState.player1Choice
+                        )}</div>
+                        <div class="result-player player1">You</div>
+                    </div>
+                    <div class="result-vs">VS</div>
+                    <div class="result-choice">
+                        <div class="result-icon">${getChoiceIcon(
+                          gameState.aiChoice
+                        )}</div>
+                        <div class="result-player player2">AI</div>
+                    </div>
+                `;
+        } else {
+          resultChoices.innerHTML = `
+                    <div class="result-choice">
+                        <div class="result-icon">${getChoiceIcon(
+                          gameState.player1Choice
+                        )}</div>
+                        <div class="result-player player1">Player 1</div>
+                    </div>
+                    <div class="result-vs">VS</div>
+                    <div class="result-choice">
+                        <div class="result-icon">${getChoiceIcon(
+                          gameState.player2Choice
+                        )}</div>
+                        <div class="result-player player2">Player 2</div>
+                    </div>
+                `;
+        }
+      }
+
+      // Initialize the game
+      document.addEventListener("DOMContentLoaded", function () {
+        // Game starts at menu by default
+      });
+    </script>
+  </body>
+</html>
